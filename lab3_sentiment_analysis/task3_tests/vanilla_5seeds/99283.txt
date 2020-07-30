@@ -1,0 +1,169 @@
+############################################################
+Evaluating model on validation dataset after epoch 0
+Confusion matrix:  
+[[908   5]
+ [870   9]]
+F1 score:	 0.020156774916013434
+Average loss:	 0.6928649544715881
+Accuracy:	 0.51171875
+############################################################
+Evaluating model on validation dataset after epoch 1
+Confusion matrix:  
+[[ 31 841]
+ [ 21 899]]
+F1 score:	 0.6759398496240602
+Average loss:	 0.6924204230308533
+Accuracy:	 0.5189732142857143
+############################################################
+Evaluating model on validation dataset after epoch 2
+Confusion matrix:  
+[[894   1]
+ [897   0]]
+F1 score:	 nan
+Average loss:	 0.6933964490890503
+Accuracy:	 0.49888392857142855
+############################################################
+Evaluating model on validation dataset after epoch 3
+Confusion matrix:  
+[[861   3]
+ [925   3]]
+F1 score:	 0.006423982869379016
+Average loss:	 0.6990101933479309
+Accuracy:	 0.48214285714285715
+############################################################
+Evaluating model on validation dataset after epoch 4
+Confusion matrix:  
+[[849   1]
+ [938   4]]
+F1 score:	 0.008447729672650475
+Average loss:	 0.7063246369361877
+Accuracy:	 0.4760044642857143
+############################################################
+Evaluating model on validation dataset after epoch 5
+Confusion matrix:  
+[[ 48 854]
+ [ 46 844]]
+F1 score:	 0.6522411128284389
+Average loss:	 0.6936734914779663
+Accuracy:	 0.49776785714285715
+############################################################
+Evaluating model on validation dataset after epoch 6
+Confusion matrix:  
+[[897   8]
+ [877  10]]
+F1 score:	 0.022099447513812154
+Average loss:	 0.696457028388977
+Accuracy:	 0.5061383928571429
+############################################################
+Evaluating model on validation dataset after epoch 7
+Confusion matrix:  
+[[828   7]
+ [920  37]]
+F1 score:	 0.0739260739260739
+Average loss:	 0.6875821352005005
+Accuracy:	 0.48270089285714285
+############################################################
+Evaluating model on validation dataset after epoch 8
+Confusion matrix:  
+[[886   7]
+ [878  21]]
+F1 score:	 0.045307443365695796
+Average loss:	 0.6913768649101257
+Accuracy:	 0.5061383928571429
+############################################################
+Evaluating model on validation dataset after epoch 9
+Confusion matrix:  
+[[404 466]
+ [110 812]]
+F1 score:	 0.7381818181818182
+Average loss:	 0.6282920837402344
+Accuracy:	 0.6785714285714286
+############################################################
+Evaluating model on validation dataset after epoch 10
+Confusion matrix:  
+[[639 251]
+ [290 612]]
+F1 score:	 0.693484419263456
+Average loss:	 0.6140453219413757
+Accuracy:	 0.6981026785714286
+############################################################
+Evaluating model on validation dataset after epoch 11
+Confusion matrix:  
+[[582 317]
+ [132 761]]
+F1 score:	 0.7721968543886352
+Average loss:	 0.5622528195381165
+Accuracy:	 0.7494419642857143
+############################################################
+Evaluating model on validation dataset after epoch 12
+Confusion matrix:  
+[[651 262]
+ [222 657]]
+F1 score:	 0.7308120133481646
+Average loss:	 0.5840856432914734
+Accuracy:	 0.7299107142857143
+############################################################
+Evaluating model on validation dataset after epoch 13
+Confusion matrix:  
+[[721 197]
+ [298 576]]
+F1 score:	 0.6994535519125683
+Average loss:	 0.5917874574661255
+Accuracy:	 0.7237723214285714
+############################################################
+Evaluating model on validation dataset after epoch 14
+Confusion matrix:  
+[[552 336]
+ [167 737]]
+F1 score:	 0.7455741021750126
+Average loss:	 0.5894920229911804
+Accuracy:	 0.7193080357142857
+############################################################
+Evaluating model on validation dataset after epoch 15
+Confusion matrix:  
+[[476 422]
+ [ 85 809]]
+F1 score:	 0.7614117647058825
+Average loss:	 0.5861230492591858
+Accuracy:	 0.7170758928571429
+############################################################
+Evaluating model on validation dataset after epoch 16
+Confusion matrix:  
+[[826  89]
+ [472 405]]
+F1 score:	 0.5908096280087528
+Average loss:	 0.6404102444648743
+Accuracy:	 0.6869419642857143
+############################################################
+Evaluating model on validation dataset after epoch 17
+Confusion matrix:  
+[[634 254]
+ [178 726]]
+F1 score:	 0.7707006369426751
+Average loss:	 0.5498058795928955
+Accuracy:	 0.7589285714285714
+############################################################
+Evaluating model on validation dataset after epoch 18
+Confusion matrix:  
+[[700 157]
+ [358 577]]
+F1 score:	 0.6914319952067106
+Average loss:	 0.6232185363769531
+Accuracy:	 0.7126116071428571
+############################################################
+Evaluating model on validation dataset after epoch 19
+Confusion matrix:  
+[[603 267]
+ [153 769]]
+F1 score:	 0.7854954034729316
+Average loss:	 0.5431584715843201
+Accuracy:	 0.765625
+############################################################
+Evaluating model on test dataset after completion 
+Confusion matrix:  
+[[312 133]
+ [ 72 347]]
+F1 score:	 0.7719688542825361
+Average loss:	 0.5434240102767944
+Accuracy:	 0.7627314814814815
+############################################################

@@ -1,0 +1,52 @@
+Usage: python NLP_RNN.py <Vanilla|GRU|LSTM> num_layers dropout bidirectional hidden_size seed
+Example: python NLP_RNN.py Vanilla 2 0 0 150 456787
+
+with hidden_size 150, all celly types behave the same (~75 acc)
+hidden_size = [30, 150, 400]
+num_layers = [2, 6, 30]
+bi = [0, 1]
+dropout = [0.05, 0.2, 0.5]
+
+Fixed params:
+    lr = 1e-4
+    b_size = 32
+
+python NLP_RNN.py Vanilla 2 0 0 150 319
+python NLP_RNN.py GRU 2 0 0 150 319
+python NLP_RNN.py LSTM 2 0 0 150 319
+
+Summary: accuracy
+Vanilla ~75
+GRU     ~75
+LSTM    ~74
+
+SEEDS: [74732, 91273, 319, 99283, 4510]
+
+
+
+seed 319
+### Experiment 1
+Trying low hidden size (30) but many layers (30)
+python NLP_RNN.py Vanilla 30 0 0 30 319
+python NLP_RNN.py GRU 30 0 0 30 319
+python NLP_RNN.py LSTM 30 0 0 30 319
+-low hidden size no good ~52 acc on all
+
+### Experiment 2
+Trying high hidden size (400), with 6 and 2 layers:
+python NLP_RNN.py Vanilla 2 0 0 400 319
+python NLP_RNN.py Vanilla 6 0 0 400 319
+-too extreme
+
+### Experiment 3
+check balanced vanilla bidirectional and not
+python NLP_RNN.py Vanilla 4 0.05 0 300 99283
+python NLP_RNN.py Vanilla 4 0.05 1 300 99293
+
+python NLP_RNN.py GRU 4 0.1 0 300 99283 > GRU_4_005_300_99283.txt
+python NLP_RNN.py GRU 4 0.1 1 300 99293 > GRU_4_005_300_99283_bi.txt
+
+python NLP_RNN.py LSTM 4 0.2 0 300 99283 > LSTM_4_005_300_99283.txt
+python NLP_RNN.py LSTM 4 0.2 1 300 99293 > LSTM_4_005_300_99283_bi.txt
+
+

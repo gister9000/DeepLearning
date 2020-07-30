@@ -1,0 +1,87 @@
+Probajte pokrenuti povratne neuronske mreže za najbolji set hiperparametara bez da koristite prednaučene vektorske reprezentacije. Probajte isto za vaš baseline model. Koji model više “pati” od gubitka prednaučenih reprezentacija?
+
+
+Conclusion:
+1. GRU ~75 acc and f1
+2. LSTM ~75 acc and f1 (but needs more to converge than GRU)
+3. AVGpool ~65 acc and f1
+4. Vanilla ~50 acc and terrible f1
+
+All experiments are done with 2 hidden layers and 150 hidden size and 4 hidden layers and 300 hidden size.
+
+
+AVGpool baseline model is severely worse (75 to 65 acc and F1):
+############################################################
+Evaluating model on validation dataset after epoch 19
+Confusion matrix:  
+[[570 324]
+ [271 627]]
+F1 score:		 0.6782044348296377
+Average loss:	 0.6136903762817383
+Accuracy:		 0.66796875
+############################################################
+Evaluating model on test dataset after completion 
+Confusion matrix:  
+[[289 147]
+ [158 270]]
+F1 score:		 0.6390532544378699
+Average loss:	 0.6385445594787598
+Accuracy:		 0.6469907407407407
+############################################################
+
+
+RNN Vanilla terrible (2 experiments) - acc ~50
+############################################################
+Confusion matrix:  
+[[844  26]
+ [887  35]]
+F1 score:	 0.07121057985757884
+Average loss:	 0.839045524597168
+Accuracy:	 0.49051339285714285
+############################################################
+Evaluating model on test dataset after completion 
+Confusion matrix:  
+[[436   9]
+ [410   9]]
+F1 score:	 0.041189931350114416
+Average loss:	 0.8550121188163757
+Accuracy:	 0.5150462962962963
+############################################################
+
+RNN GRU nice results ~75 acc (drop from ~79)
+############################################################
+Evaluating model on validation dataset after epoch 10
+Confusion matrix:  
+[[701 215]
+ [233 643]]
+F1 score:	 0.7416378316032295
+Average loss:	 0.5815436244010925
+Accuracy:	 0.75
+############################################################
+
+
+RNN LSTM 
+############################################################
+Evaluating model on validation dataset after epoch 9
+Confusion matrix:  
+[[631 240]
+ [298 623]]
+F1 score:	 0.6984304932735426
+Average loss:	 0.5894609093666077
+Accuracy:	 0.6997767857142857
+############################################################
+
+
+...catches up later
+
+############################################################
+Evaluating model on validation dataset after epoch 15
+Confusion matrix:  
+[[576 315]
+ [143 758]]
+F1 score:	 0.767983789260385
+Average loss:	 0.6217893958091736
+Accuracy:	 0.7444196428571429
+############################################################
+
+
