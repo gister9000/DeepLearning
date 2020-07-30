@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<!-- saved from url=(0031)https://dlunizg.github.io/lab3/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>vježba: analiza klasifikacije sentimenta</title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="Materijali i laboratorijske vježbe iz predmeta Duboko Učenje">
+    <link rel="canonical" href="http://dlunizg.github.io/lab3/">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="./lab3_task_croatian_files/main.css">
+
+    <!-- Google fonts -->
+    <link href="./lab3_task_croatian_files/css" rel="stylesheet" type="text/css">
+
+    <!-- Google tracking -->
+    <script async="" src="./lab3_task_croatian_files/analytics.js"></script><script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-46895817-2', 'auto');
+      ga('send', 'pageview');
+
+    </script><script data-dapp-detection="">
+(function() {
+  let alreadyInsertedMetaTag = false
+
+  function __insertDappDetected() {
+    if (!alreadyInsertedMetaTag) {
+      const meta = document.createElement('meta')
+      meta.name = 'dapp-detected'
+      document.head.appendChild(meta)
+      alreadyInsertedMetaTag = true
+    }
+  }
+
+  if (window.hasOwnProperty('web3')) {
+    // Note a closure can't be used for this var because some sites like
+    // www.wnyc.org do a second script execution via eval for some reason.
+    window.__disableDappDetectionInsertion = true
+    // Likely oldWeb3 is undefined and it has a property only because
+    // we defined it. Some sites like wnyc.org are evaling all scripts
+    // that exist again, so this is protection against multiple calls.
+    if (window.web3 === undefined) {
+      return
+    }
+    __insertDappDetected()
+  } else {
+    var oldWeb3 = window.web3
+    Object.defineProperty(window, 'web3', {
+      configurable: true,
+      set: function (val) {
+        if (!window.__disableDappDetectionInsertion)
+          __insertDappDetected()
+        oldWeb3 = val
+      },
+      get: function () {
+        if (!window.__disableDappDetectionInsertion)
+          __insertDappDetected()
+        return oldWeb3
+      }
+    })
+  }
+})()</script>
+    
+<style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Menu_Button .MathJax_Hover_Arrow {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; font-family: 'Courier New',Courier; font-size: 9px; color: #F0F0F0}
+.MathJax_Menu_Button .MathJax_Hover_Arrow span {display: block; background-color: #AAA; border: 1px solid; border-radius: 3px; line-height: 0; padding: 4px}
+.MathJax_Hover_Arrow:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_Hover_Arrow:hover span {background-color: #CCC!important}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_About.MathJax_MousePost {outline: none}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 5px 0px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px; -khtml-border-radius: 5px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 1px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; padding-top: .25em; color: #666666; font-size: .75em}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: .7em}
+.MathJax_MenuRadioCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuLabel {padding: 1px 2em 3px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #DDDDDD; margin: 4px 3px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: #606872; color: white}
+.MathJax_MenuDisabled:focus, .MathJax_MenuLabel:focus {background-color: #E8E8E8}
+.MathJax_ContextMenu:focus {outline: none}
+.MathJax_ContextMenu .MathJax_MenuItem:focus {outline: none}
+#MathJax_AboutClose {top: .2em; right: .2em}
+.MathJax_Menu .MathJax_MenuClose {top: -10px; left: -10px}
+.MathJax_MenuClose {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; font-family: 'Courier New',Courier; font-size: 24px; color: #F0F0F0}
+.MathJax_MenuClose span {display: block; background-color: #AAA; border: 1.5px solid; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; line-height: 0; padding: 8px 0 6px}
+.MathJax_MenuClose:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_MenuClose:hover span {background-color: #CCC!important}
+.MathJax_MenuClose:hover:focus {outline: none}
+</style><style type="text/css">.MathJax_Preview .MJXf-math {color: inherit!important}
+</style><style type="text/css">.MJX_Assistive_MathML {position: absolute!important; top: 0; left: 0; clip: rect(1px, 1px, 1px, 1px); padding: 1px 0 0 0!important; border: 0!important; height: 1px!important; width: 1px!important; overflow: hidden!important; display: block!important; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none}
+.MJX_Assistive_MathML.MJX_Assistive_MathML_Block {width: 100%!important}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; -webkit-box-sizing: content-box; -moz-box-sizing: content-box; box-sizing: content-box; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1em; bottom: 1.5em; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style><style type="text/css">.MJXp-script {font-size: .8em}
+.MJXp-right {-webkit-transform-origin: right; -moz-transform-origin: right; -ms-transform-origin: right; -o-transform-origin: right; transform-origin: right}
+.MJXp-bold {font-weight: bold}
+.MJXp-italic {font-style: italic}
+.MJXp-scr {font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-frak {font-family: MathJax_Fraktur,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-sf {font-family: MathJax_SansSerif,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-cal {font-family: MathJax_Caligraphic,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-mono {font-family: MathJax_Typewriter,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-largeop {font-size: 150%}
+.MJXp-largeop.MJXp-int {vertical-align: -.2em}
+.MJXp-math {display: inline-block; line-height: 1.2; text-indent: 0; font-family: 'Times New Roman',Times,STIXGeneral,serif; white-space: nowrap; border-collapse: collapse}
+.MJXp-display {display: block; text-align: center; margin: 1em 0}
+.MJXp-math span {display: inline-block}
+.MJXp-box {display: block!important; text-align: center}
+.MJXp-box:after {content: " "}
+.MJXp-rule {display: block!important; margin-top: .1em}
+.MJXp-char {display: block!important}
+.MJXp-mo {margin: 0 .15em}
+.MJXp-mfrac {margin: 0 .125em; vertical-align: .25em}
+.MJXp-denom {display: inline-table!important; width: 100%}
+.MJXp-denom > * {display: table-row!important}
+.MJXp-surd {vertical-align: top}
+.MJXp-surd > * {display: block!important}
+.MJXp-script-box > *  {display: table!important; height: 50%}
+.MJXp-script-box > * > * {display: table-cell!important; vertical-align: top}
+.MJXp-script-box > *:last-child > * {vertical-align: bottom}
+.MJXp-script-box > * > * > * {display: block!important}
+.MJXp-mphantom {visibility: hidden}
+.MJXp-munderover {display: inline-table!important}
+.MJXp-over {display: inline-block!important; text-align: center}
+.MJXp-over > * {display: block!important}
+.MJXp-munderover > * {display: table-row!important}
+.MJXp-mtable {vertical-align: .25em; margin: 0 .125em}
+.MJXp-mtable > * {display: inline-table!important; vertical-align: middle}
+.MJXp-mtr {display: table-row!important}
+.MJXp-mtd {display: table-cell!important; text-align: center; padding: .5em 0 0 .5em}
+.MJXp-mtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-mlabeledtr {display: table-row!important}
+.MJXp-mlabeledtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mlabeledtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MJXp-scale0 {-webkit-transform: scaleX(.0); -moz-transform: scaleX(.0); -ms-transform: scaleX(.0); -o-transform: scaleX(.0); transform: scaleX(.0)}
+.MJXp-scale1 {-webkit-transform: scaleX(.1); -moz-transform: scaleX(.1); -ms-transform: scaleX(.1); -o-transform: scaleX(.1); transform: scaleX(.1)}
+.MJXp-scale2 {-webkit-transform: scaleX(.2); -moz-transform: scaleX(.2); -ms-transform: scaleX(.2); -o-transform: scaleX(.2); transform: scaleX(.2)}
+.MJXp-scale3 {-webkit-transform: scaleX(.3); -moz-transform: scaleX(.3); -ms-transform: scaleX(.3); -o-transform: scaleX(.3); transform: scaleX(.3)}
+.MJXp-scale4 {-webkit-transform: scaleX(.4); -moz-transform: scaleX(.4); -ms-transform: scaleX(.4); -o-transform: scaleX(.4); transform: scaleX(.4)}
+.MJXp-scale5 {-webkit-transform: scaleX(.5); -moz-transform: scaleX(.5); -ms-transform: scaleX(.5); -o-transform: scaleX(.5); transform: scaleX(.5)}
+.MJXp-scale6 {-webkit-transform: scaleX(.6); -moz-transform: scaleX(.6); -ms-transform: scaleX(.6); -o-transform: scaleX(.6); transform: scaleX(.6)}
+.MJXp-scale7 {-webkit-transform: scaleX(.7); -moz-transform: scaleX(.7); -ms-transform: scaleX(.7); -o-transform: scaleX(.7); transform: scaleX(.7)}
+.MJXp-scale8 {-webkit-transform: scaleX(.8); -moz-transform: scaleX(.8); -ms-transform: scaleX(.8); -o-transform: scaleX(.8); transform: scaleX(.8)}
+.MJXp-scale9 {-webkit-transform: scaleX(.9); -moz-transform: scaleX(.9); -ms-transform: scaleX(.9); -o-transform: scaleX(.9); transform: scaleX(.9)}
+.MathJax_PHTML .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style><style type="text/css">.MathJax_Display {text-align: center; margin: 1em 0em; position: relative; display: block!important; text-indent: 0; max-width: none; max-height: none; min-width: 0; min-height: 0; width: 100%}
+.MathJax .merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MathJax .MJX-monospace {font-family: monospace}
+.MathJax .MJX-sans-serif {font-family: sans-serif}
+#MathJax_Tooltip {background-color: InfoBackground; color: InfoText; border: 1px solid black; box-shadow: 2px 2px 5px #AAAAAA; -webkit-box-shadow: 2px 2px 5px #AAAAAA; -moz-box-shadow: 2px 2px 5px #AAAAAA; -khtml-box-shadow: 2px 2px 5px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true'); padding: 3px 4px; z-index: 401; position: absolute; left: 0; top: 0; width: auto; height: auto; display: none}
+.MathJax {display: inline; font-style: normal; font-weight: normal; line-height: normal; font-size: 100%; font-size-adjust: none; text-indent: 0; text-align: left; text-transform: none; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; direction: ltr; max-width: none; max-height: none; min-width: 0; min-height: 0; border: 0; padding: 0; margin: 0}
+.MathJax:focus, body :focus .MathJax {display: inline-table}
+.MathJax.MathJax_FullWidth {text-align: center; display: table-cell!important; width: 10000em!important}
+.MathJax img, .MathJax nobr, .MathJax a {border: 0; padding: 0; margin: 0; max-width: none; max-height: none; min-width: 0; min-height: 0; vertical-align: 0; line-height: normal; text-decoration: none}
+img.MathJax_strut {border: 0!important; padding: 0!important; margin: 0!important; vertical-align: 0!important}
+.MathJax span {display: inline; position: static; border: 0; padding: 0; margin: 0; vertical-align: 0; line-height: normal; text-decoration: none}
+.MathJax nobr {white-space: nowrap!important}
+.MathJax img {display: inline!important; float: none!important}
+.MathJax * {transition: none; -webkit-transition: none; -moz-transition: none; -ms-transition: none; -o-transition: none}
+.MathJax_Processing {visibility: hidden; position: fixed; width: 0; height: 0; overflow: hidden}
+.MathJax_Processed {display: none!important}
+.MathJax_ExBox {display: block!important; overflow: hidden; width: 1px; height: 60ex; min-height: 0; max-height: none}
+.MathJax .MathJax_EmBox {display: block!important; overflow: hidden; width: 1px; height: 60em; min-height: 0; max-height: none}
+.MathJax_LineBox {display: table!important}
+.MathJax_LineBox span {display: table-cell!important; width: 10000em!important; min-width: 0; max-width: none; padding: 0; border: 0; margin: 0}
+.MathJax .MathJax_HitBox {cursor: text; background: white; opacity: 0; filter: alpha(opacity=0)}
+.MathJax .MathJax_HitBox * {filter: none; opacity: 1; background: transparent}
+#MathJax_Tooltip * {filter: none; opacity: 1; background: transparent}
+@font-face {font-family: MathJax_Main; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Main-Regular.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Main-Regular.otf?V=2.7.1') format('opentype')}
+@font-face {font-family: MathJax_Main-bold; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Main-Bold.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Main-Bold.otf?V=2.7.1') format('opentype')}
+@font-face {font-family: MathJax_Main-italic; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Main-Italic.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Main-Italic.otf?V=2.7.1') format('opentype')}
+@font-face {font-family: MathJax_Math-italic; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Math-Italic.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Math-Italic.otf?V=2.7.1') format('opentype')}
+@font-face {font-family: MathJax_Caligraphic; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Caligraphic-Regular.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Caligraphic-Regular.otf?V=2.7.1') format('opentype')}
+@font-face {font-family: MathJax_Size1; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Size1-Regular.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Size1-Regular.otf?V=2.7.1') format('opentype')}
+@font-face {font-family: MathJax_Size2; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Size2-Regular.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Size2-Regular.otf?V=2.7.1') format('opentype')}
+@font-face {font-family: MathJax_Size3; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Size3-Regular.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Size3-Regular.otf?V=2.7.1') format('opentype')}
+@font-face {font-family: MathJax_Size4; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Size4-Regular.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Size4-Regular.otf?V=2.7.1') format('opentype')}
+.MathJax .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style><style type="text/css">@font-face {font-family: MathJax_AMS; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_AMS-Regular.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_AMS-Regular.otf?V=2.7.1') format('opentype')}
+</style></head>
+
+
+    <body><div style="visibility: hidden; overflow: hidden; position: absolute; top: 0px; height: 1px; width: auto; padding: 0px; border: 0px; margin: 0px; text-align: left; text-indent: 0px; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal;"><div id="MathJax_Hidden"></div></div><div id="MathJax_Message" style="display: none;"></div>
+
+    <header class="site-header">
+
+  <div class="wrap title-wrap">
+    <a class="site-title" href="http://www.zemris.fer.hr/~ssegvic/du/index.shtml">Stranice predmeta Duboko učenje (FER)</a>
+  </div>
+  
+</header>
+
+
+    <div class="page-content">
+      <div class="wrap">
+      <div class="post">
+
+<!--
+  <header class="post-header">
+    <h1>vježba: analiza klasifikacije sentimenta</h1>
+  </header>
+-->
+
+  <article class="post-content">
+  <h2 id="3-vježba-analiza-klasifikacije-sentimenta">3. vježba: analiza klasifikacije sentimenta</h2>
+
+<p>U trećoj laboratorijskoj vježbi bavimo se problemom analize sentimenta recenzija filmova pomoću povratnih neuronskih mreža.
+Kao skup podataka analizirati ćemo <a href="https://nlp.stanford.edu/sentiment/">Stanford Sentiment Treebank</a> (SST), manji skup podataka koji je često korišten u obradi prirodnog jezika. SST je specifičan jer u svom punom obliku sadrži anotacije vrijednosti sentimenta na svakom čvoru u stablu parsiranja svake instance. Nažalost, usprkos iscrpnoj anotaciji dokumenata, taj skup podataka je često kritiziran kao pretjerano jednostavan budući da se za većinu instanci klasifikacija svodi na prepoznavanje ključnih riječi.</p>
+
+<p>Skup podataka <strong>nemojte</strong> skidati sa službenog repozitorija budući da je zapis u stablastom formatu. Uz vježbu su priložene predprocesirane verzije skupa podataka gdje su podaci pretvoreni u lowercase, a neki tokeni su filtrirani.
+Osim skupa podataka, za potrebe laboratorijske vježbe dobiti ćete i set vektorskih reprezentacija za sve riječi koje su prisutne u <strong>train</strong> splitu SST dataseta.</p>
+
+<p>Train, test i validacijski skup podataka za SST možete naći <a href="https://github.com/dlunizg/dlunizg.github.io/tree/master/data/lab3">ovdje</a>. Vektorske reprezentacije možete preuzeti <a href="https://drive.google.com/open?id=12mA5QEN4nFcxfEzOS8Nqj5afOmkuclc7">ovdje</a>.</p>
+
+<p>Vaš zadatak u trećoj laboratorijskoj vježbi je provjeriti koliko je SST stvarno jednostavan skup podataka te evaluirati povratne neuronske mreže kao i alternativne pristupe bazirane na sažimanju. Kroz pripremu postoji niz kontrolnih ispisa, koji bi trebali biti isti u vašoj implementaciji osim ako nije navedeno drukčije.</p>
+
+<h3 id="pogled-na-skup-podataka-stanford-sentiment-treebank">Pogled na skup podataka: Stanford Sentiment Treebank</h3>
+
+<p>Podaci u tekstnim datotekama odvojeni su s zarezom i jednim razmakom: <code class="language-plaintext highlighter-rouge">, </code>. Zarez se neće pojavljivati unutar podataka. Podaci se sastoje od teksta ulaznog primjera i ciljne oznake razreda. Oznaka razreda je <code class="language-plaintext highlighter-rouge">positive</code> ili <code class="language-plaintext highlighter-rouge">negative</code>, dok je tekst niz predsegmentiranih tokena odvojenih jednim znakom razmaka. Tekst ulaznog primjera i oznaka razreda su nešto što zovemo <strong>poljima</strong> (engl. field). Primjetite da je značenje polja ovdje u kontekstu “polje za unos podataka”, a ne obrađena travnata površina.
+Primjer prve instance skupa za testiranje:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>it 's a lovely film with lovely performances by buy and accorsi, positive
+</code></pre></div></div>
+
+<p>Podaci iz SST-a se nalaze u tri datoteke - <code class="language-plaintext highlighter-rouge">sst_train_raw.csv</code>, <code class="language-plaintext highlighter-rouge">sst_valid_raw.csv</code>, <code class="language-plaintext highlighter-rouge">sst_test_raw.csv</code>. Sve tri datoteke su u istom formatu.</p>
+
+<h3 id="zadatak-1-učitavanje-podataka-25-bodova">Zadatak 1. Učitavanje podataka (25% bodova)</h3>
+
+<p>Za razliku od računalnog vida i <code class="language-plaintext highlighter-rouge">torchvision</code> paketa, ekosustav za obradu prirodnog jezika je veoma fragmentiran i postoje razne konfliktne ideologije učitavanja podataka. Više biblioteka za ove svrhe postoji (<code class="language-plaintext highlighter-rouge">torchtext</code>, <code class="language-plaintext highlighter-rouge">AllenNLP</code>, …) no njihove funkcionalnosti u okviru vježbe nećemo koristiti.</p>
+
+<p>Kako bi bolje shvatili problematiku kojom se susrećemo s analizom teksta, vaš prvi zadatak je implementirati učitavanje skupa podataka s diska. Za iteriranje i batchiranje podataka ćemo koristiti razrede ugrađene u Pytorch (<code class="language-plaintext highlighter-rouge">torch.utils.data.DataLoader</code> i <code class="language-plaintext highlighter-rouge">torch.utils.data.Dataset</code>). Pri učitavanju podataka predlažemo vam da koristite konceptualnu podjelu na iduća tri razreda, čije se imenovanje <strong>smije razlikovati</strong>:</p>
+
+<ul>
+  <li>
+    <p>Razred <code class="language-plaintext highlighter-rouge">Instance</code>, koji je plitki omotač oko podataka. Jednostavni i korisni načini implementacije ovakvog razreda su <a href="https://docs.python.org/3/library/dataclasses.html">razredi podataka</a>, dostupne od python verzije 3.7. Alternativa su <a href="https://docs.python.org/3/library/collections.html#collections.namedtuple">imenovane ntorke</a>.</p>
+  </li>
+  <li>
+    <p>Razred <code class="language-plaintext highlighter-rouge">NLPDataset</code>, koji treba nasljeđivati <code class="language-plaintext highlighter-rouge">torch.utils.data.Dataset</code> te implementirati <code class="language-plaintext highlighter-rouge">__getitem__</code> metodu. Ovaj razred služi za spremanje i dohvaćanje podataka te operacije za koje nam je potreban cijeli skup podataka, poput izgradnje vokabulara.</p>
+  </li>
+  <li>
+    <p>Razred <code class="language-plaintext highlighter-rouge">Vocab</code>, koji nam služi za pretvorbu tekstnih podataka u indekse (što zovemo <em>numerikalizacija</em>). Funkcionalnost razreda Vocab ćemo detaljnije analizirati u idućem podpoglavju.</p>
+  </li>
+</ul>
+
+<h4 id="razred-vocab">Razred <code class="language-plaintext highlighter-rouge">Vocab</code></h4>
+
+<p>Kao što smo spomenuli na predavanjima, jedan od hiperparametara svakog modela obrade prirodnog jezika je odabir veličine vokabulara, tj., broja riječi koje ćemo reprezentirati u našem modelu. Procedura odabira se u praksi provodi u nekoj vrsti <code class="language-plaintext highlighter-rouge">Vocab</code> razreda, pri izgradnji rječnika <code class="language-plaintext highlighter-rouge">itos</code> (index-to-string) i <code class="language-plaintext highlighter-rouge">stoi</code> (string-to-index).</p>
+
+<p>Svakom ulaznom polju našeg skupa podataka pridodjeljujemo jedan vokabular. Vaša implementacija vokabulara se treba izgraditi temeljem rječnika frekvencija za neko polje. Rječnik frekvencija kao ključeve sadrži sve tokene koji su se pojavili u tom polju, dok su vrijednosti broj pojavljivanja svakog tokena.</p>
+
+<p>Primjer 5 najčešćih riječi i njihovih frekvencija za polje ulaznog teksta <code class="language-plaintext highlighter-rouge">train</code> skupa podataka, koje sadrži <code class="language-plaintext highlighter-rouge">14804</code> različitih tokena:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>the, 5954
+a, 4361
+and, 3831
+of, 3631
+to, 2438
+</code></pre></div></div>
+
+<p>Konvencija je češćim riječima pridodjeljivati niže indekse. No, prije nego krenemo s pretvorbom riječi u indekse, trebamo se pozabaviti s idejom posebnih znakova (<code class="language-plaintext highlighter-rouge">special symbols</code>).</p>
+
+<p><strong>Posebni znakovi</strong> su tokeni koji se <strong>ne</strong> nalaze u našem skupu podataka ali su nužni našem modelu za numerikalizaciju podataka. Primjeri ovih znakova koje ćemo koristiti u laboratorijskoj vježbi su znak punjenja <code class="language-plaintext highlighter-rouge">&lt;PAD&gt;</code> (eng. padding) i nepoznati znak <code class="language-plaintext highlighter-rouge">&lt;UNK&gt;</code>. 
+Znak punjenja nam je potreban kako bi naše batcheve (koji se sastoje od primjera različite duljine) sveli na jednaku duljinu, dok nam nepoznati znak služi za riječi koje nisu u našem vokabularu – bilo zbog ograničenja veličine ili jer se nisu pojavile dovoljno puta u podacima.</p>
+
+<p>Posebni znakovi uvijek imaju najniže indekse, a radi konzistentnosti s praksom ćemo znaku punjenja uvijek dati indeks 0, a nepoznatom znaku indeks 1. Preostalim rječima se indeksi trebaju dodijeliti prema njihovoj frekvenciji po principu da riječ koja se češće pojavljuje ima niži indeks. Posebni znakovi se koriste <strong>samo u tekstnom polju</strong>.</p>
+
+<p>Primjer riječi i njihovih indeksa u našem <code class="language-plaintext highlighter-rouge">stoi</code> rječniku vokabulara polja ulaznog teksta:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;PAD&gt;: 0
+&lt;UNK&gt;: 1
+the: 2
+a: 3
+and: 4
+my: 188
+twists: 930
+lets: 956
+sports: 1275
+amateurishly: 6818
+</code></pre></div></div>
+
+<p>Dok je <code class="language-plaintext highlighter-rouge">stoi</code> rječnik za vokabular polja ciljne varijable dosta kratak:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>positive, 0
+negative, 1
+</code></pre></div></div>
+
+<p>Vaša implementacija razreda <code class="language-plaintext highlighter-rouge">Vocab</code> mora implementirati funkcionalnost pretvorbe niza tokena (ili jednog tokena) u brojeve. Ovu funkciju možete nazvati <code class="language-plaintext highlighter-rouge">encode</code>. Primjer ove pretvorbe za četvrtu instancu train skupa:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">instance_text</span><span class="p">,</span> <span class="n">instance_label</span> <span class="o">=</span> <span class="n">train_dataset</span><span class="p">.</span><span class="n">instances</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="s">f"Text: </span><span class="si">{</span><span class="n">instance_text</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">f"Label: </span><span class="si">{</span><span class="n">instance_label</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Text</span><span class="p">:</span> <span class="p">[</span><span class="s">'yet'</span><span class="p">,</span> <span class="s">'the'</span><span class="p">,</span> <span class="s">'act'</span><span class="p">,</span> <span class="s">'is'</span><span class="p">,</span> <span class="s">'still'</span><span class="p">,</span> <span class="s">'charming'</span><span class="p">,</span> <span class="s">'here'</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Label</span><span class="p">:</span> <span class="n">positive</span>
+<span class="k">print</span><span class="p">(</span><span class="s">f"Numericalized text: </span><span class="si">{</span><span class="n">text_vocab</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">instance_text</span><span class="p">)</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">f"Numericalized label: </span><span class="si">{</span><span class="n">label_vocab</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">instance_label</span><span class="p">)</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Numericalized</span> <span class="n">text</span><span class="p">:</span> <span class="n">tensor</span><span class="p">([</span><span class="mi">189</span><span class="p">,</span>   <span class="mi">2</span><span class="p">,</span> <span class="mi">674</span><span class="p">,</span>   <span class="mi">7</span><span class="p">,</span> <span class="mi">129</span><span class="p">,</span> <span class="mi">348</span><span class="p">,</span> <span class="mi">143</span><span class="p">])</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Numericalized</span> <span class="n">label</span><span class="p">:</span> <span class="n">tensor</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Također, vaša implementacija razreda <code class="language-plaintext highlighter-rouge">Vocab</code> mora primati iduće parametre:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">max_size</code>: maksimalni broj tokena koji se sprema u vokabular (uključuje i posebne znakove). <code class="language-plaintext highlighter-rouge">-1</code> označava da se spremaju svi tokeni.</li>
+  <li><code class="language-plaintext highlighter-rouge">min_freq</code>: minimalna frekvencija koju token mora imati da bi ga se spremilo u vokabular (\ge). Posebni znakovi ne prolaze ovu provjeru.</li>
+</ul>
+
+<p>Primjer izgradnje vokabulara sa svim tokenima (duljina uključuje i posebne znakove):</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">text_vocab</span> <span class="o">=</span> <span class="n">Vocab</span><span class="p">(</span><span class="n">frequencies</span><span class="p">,</span> <span class="n">max_size</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">min_freq</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">text_vocab</span><span class="p">.</span><span class="n">itos</span><span class="p">))</span>
+<span class="mi">14806</span>
+</code></pre></div></div>
+
+<p><strong>Bitno</strong>: vokabular se izgrađuje <strong>samo</strong> na train skupu podataka. Jednom izgrađeni vokabular na train skupu postavljate kao vokabular testnog i validacijskog skupa podataka. Ovaj pristup se smatra najkorektniji u analizi teksta jer kroz izgradnju vokabulara na testnom i validacijskom skupu imamo curenje informacija u treniranje modela.
+Primjerice – u realnoj situaciji gdje deployate vaš model nije vjerojatno da će vaš model svaku viđenu riječ imati u vokabularu. Prema tome, ovakav način evaluacije, iako stroži, je realističniji.</p>
+
+<h4 id="učitavanje-vektorskih-reprezentacija">Učitavanje vektorskih reprezentacija</h4>
+
+<p>U okviru laboratorijske vježbe, uz skup podataka, dobiti ćete i podskup prednaučenih reprezentacija riječi <a href="https://nlp.stanford.edu/projects/glove/">GloVe</a>. Ove vektorske reprezentacije možete preuzeti <a href="https://drive.google.com/open?id=12mA5QEN4nFcxfEzOS8Nqj5afOmkuclc7">ovdje</a>.</p>
+
+<p>Vektorske reprezentacije riječi su zapisane u tekstnom formatu, pri čemu svaki redak sadrži token (riječ) i njenu 300-dimenzijsku vektorsku reprezentaciju. Vektorske reprezentacije koje koristimo u vježbi će uvijek biti 300-dimenzijske. Elementi svakog retka su odvojeni jednim zarezom.</p>
+
+<p>Primjer prvog retka:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>the 0.04656 0.21318 -0.0074364 -0.45854 -0.035639 ...
+</code></pre></div></div>
+
+<p>Vaš zadatak je implementirati funkciju koja će za zadani vokabular (iterable stringova) generirati embedding matricu. Vaša funkcija treba podržavati dva načina genriranja embedding matrice: nasumična inicijalizacija iz standardne normalne razdiobe <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-1-Frame" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mi mathvariant=&quot;double-struck&quot;&gt;N&lt;/mi&gt;&lt;/mrow&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mn&gt;0&lt;/mn&gt;&lt;mo&gt;,&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;/math&gt;" role="presentation" style="position: relative;"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-1" style="width: 4.511em; display: inline-block;"><span style="display: inline-block; position: relative; width: 3.691em; height: 0px; font-size: 122%;"><span style="position: absolute; clip: rect(1.591em, 1003.59em, 2.923em, -999.997em); top: -2.508em; left: 0em;"><span class="mrow" id="MathJax-Span-2"><span class="mo" id="MathJax-Span-3" style="font-family: MathJax_Main;">(</span><span class="texatom" id="MathJax-Span-4"><span class="mrow" id="MathJax-Span-5"><span class="mi" id="MathJax-Span-6" style="font-family: MathJax_AMS;">N</span></span></span><span class="mo" id="MathJax-Span-7" style="font-family: MathJax_Main;">(</span><span class="mn" id="MathJax-Span-8" style="font-family: MathJax_Main;">0</span><span class="mo" id="MathJax-Span-9" style="font-family: MathJax_Main;">,</span><span class="mn" id="MathJax-Span-10" style="font-family: MathJax_Main; padding-left: 0.156em;">1</span><span class="mo" id="MathJax-Span-11" style="font-family: MathJax_Main;">)</span><span class="mo" id="MathJax-Span-12" style="font-family: MathJax_Main;">)</span></span><span style="display: inline-block; width: 0px; height: 2.513em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.372em; border-left: 0px solid; width: 0px; height: 1.378em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mo stretchy="false">(</mo><mrow class="MJX-TeXAtom-ORD"><mi mathvariant="double-struck">N</mi></mrow><mo stretchy="false">(</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="false">)</mo><mo stretchy="false">)</mo></math></span></span><script type="math/tex" id="MathJax-Element-1">(\mathbb{N}(0,1))</script> i učitavanjem iz datoteke.
+Pri učitavanju iz datoteke, ako ne pronađete vektorsku reprezentaciju za neku riječ, inicijalizirajte ju normalno. Vektorsku reprezentaciju za znak punjenja (na indeksu 0) <strong>morate</strong> inicijalizirati na vektor nula.
+Jednostavan način na koji možete implementirati ovo učitavanje je da inicijalirate matricu iz standardne normalne razdiobe, a potom prebrišete inicijalnu reprezentaciju u retku za svaku riječ koju učitate. 
+<strong>Bitno:</strong> Pripazite da redoslijed vektorskih reprezentacija u matrici odgovara redoslijedu riječi u vokabularu! Npr., na indeksu 0 mora biti reprezentacija za posebni znak punjenja.</p>
+
+<p>Jednom kad ste uspješno učitali vašu <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-2-Frame" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;V&lt;/mi&gt;&lt;mo&gt;&amp;#x00D7;&lt;/mo&gt;&lt;mi&gt;d&lt;/mi&gt;&lt;/math&gt;" role="presentation" style="position: relative;"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-13" style="width: 3.076em; display: inline-block;"><span style="display: inline-block; position: relative; width: 2.513em; height: 0px; font-size: 122%;"><span style="position: absolute; clip: rect(1.335em, 1002.51em, 2.359em, -999.997em); top: -2.2em; left: 0em;"><span class="mrow" id="MathJax-Span-14"><span class="mi" id="MathJax-Span-15" style="font-family: MathJax_Math-italic;">V<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.207em;"></span></span><span class="mo" id="MathJax-Span-16" style="font-family: MathJax_Main; padding-left: 0.207em;">×</span><span class="mi" id="MathJax-Span-17" style="font-family: MathJax_Math-italic; padding-left: 0.207em;">d<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span></span><span style="display: inline-block; width: 0px; height: 2.205em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.059em; border-left: 0px solid; width: 0px; height: 1.003em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>V</mi><mo>×</mo><mi>d</mi></math></span></span><script type="math/tex" id="MathJax-Element-2">V\times d</script> embedding matricu, iskoristite <a href="https://pytorch.org/docs/stable/nn.html#torch.nn.Embedding.from_pretrained"><code class="language-plaintext highlighter-rouge">torch.nn.Embedding.from_pretrained()</code></a> kako bi vašu matricu spremili u optimizirani omotač za vektorske reprezentacije.
+Postavite parametar funkcije <code class="language-plaintext highlighter-rouge">padding_idx</code> na 0 (indeks znaka punjenja u vašoj embedding matrici), a parametar funkcije <code class="language-plaintext highlighter-rouge">freeze</code> ostavite na <code class="language-plaintext highlighter-rouge">True</code> ako koristite predtrenirane reprezentacije, a postavite na <code class="language-plaintext highlighter-rouge">False</code> inače.</p>
+
+<h4 id="nadjačavanje-metoda-torchutilsdatadataset">Nadjačavanje metoda <code class="language-plaintext highlighter-rouge">torch.utils.data.Dataset</code></h4>
+
+<p>Da bi naša implementacija razreda <code class="language-plaintext highlighter-rouge">NLPDataset</code> bila potpuna, potrebno je nadjačati <code class="language-plaintext highlighter-rouge">__getitem__</code> metodu koja omogućava indeksiranje razreda. Za potrebe vježbe, ta metoda treba vraćati numerikalizirani text i labelu referencirane instance. Također, dovoljno je napraviti da se numerikalizacija radi “on-the-fly”, i nije ju nužno cachirati.</p>
+
+<p>Primjer numerikalizacije s nadjačavanjem:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">instance_text</span><span class="p">,</span> <span class="n">instance_label</span> <span class="o">=</span> <span class="n">train_dataset</span><span class="p">.</span><span class="n">instances</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+<span class="c1"># Referenciramo atribut klase pa se ne zove nadjačana metoda
+</span><span class="k">print</span><span class="p">(</span><span class="s">f"Text: </span><span class="si">{</span><span class="n">instance_text</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">f"Label: </span><span class="si">{</span><span class="n">instance_label</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Text</span><span class="p">:</span> <span class="p">[</span><span class="s">'yet'</span><span class="p">,</span> <span class="s">'the'</span><span class="p">,</span> <span class="s">'act'</span><span class="p">,</span> <span class="s">'is'</span><span class="p">,</span> <span class="s">'still'</span><span class="p">,</span> <span class="s">'charming'</span><span class="p">,</span> <span class="s">'here'</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Label</span><span class="p">:</span> <span class="n">positive</span>
+<span class="n">numericalized_text</span><span class="p">,</span> <span class="n">numericalized_label</span> <span class="o">=</span> <span class="n">train_dataset</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+<span class="c1"># Koristimo nadjačanu metodu indeksiranja
+</span><span class="k">print</span><span class="p">(</span><span class="s">f"Numericalized text: </span><span class="si">{</span><span class="n">numericalized_text</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">f"Numericalized label: </span><span class="si">{</span><span class="n">numericalized_abel</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Numericalized</span> <span class="n">text</span><span class="p">:</span> <span class="n">tensor</span><span class="p">([</span><span class="mi">189</span><span class="p">,</span>   <span class="mi">2</span><span class="p">,</span> <span class="mi">674</span><span class="p">,</span>   <span class="mi">7</span><span class="p">,</span> <span class="mi">129</span><span class="p">,</span> <span class="mi">348</span><span class="p">,</span> <span class="mi">143</span><span class="p">])</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Numericalized</span> <span class="n">label</span><span class="p">:</span> <span class="n">tensor</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h4 id="implementacija-batchiranja-podataka-collate-funkcija">Implementacija batchiranja podataka: <code class="language-plaintext highlighter-rouge">collate</code> funkcija</h4>
+
+<p>Skoro smo spremni za implementaciju modela – jedino što je preostalo je implementacija pretvorbi niza elemenata u batch podataka. Ovdje se ponovno susrećemo s problemom varijabilnosti dimenzije.</p>
+
+<p>Pytorchev <code class="language-plaintext highlighter-rouge">torch.utils.data.DataLoader</code> pri spremanju podataka u batcheve u svojoj defaultnoj implementaciji collate funkcije očekuje da su elementi batcha jednake duljine. Ovo u tekstu nije slučaj, te u praksi moramo implementirati vlastitu collate funkciju.</p>
+
+<p>Prvo ćemo definirati što je uopće collate funkcija. Detaljna dokumentacija može se naći <a href="https://pytorch.org/docs/stable/data.html#dataloader-collate-fn">ovdje</a>, dok je grubo objašnjenje da se collate funkcija koristi za izgradnju batch tenzora za svako ulazno polje liste instanci. Primjer kostura te metode:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">collate_fn</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
+    <span class="s">"""
+    Arguments:
+      Batch:
+        list of Instances returned by `Dataset.__getitem__`.
+    Returns:
+      A tensor representing the input batch.
+    """</span>
+
+    <span class="n">texts</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">batch</span><span class="p">)</span> <span class="c1"># Assuming the instance is in tuple-like form
+</span>    <span class="n">lengths</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">tensor</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">texts</span><span class="p">])</span> <span class="c1"># Needed for later
+</span>    <span class="c1"># Process the text instances
+</span>    <span class="k">return</span> <span class="n">texts</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">lengths</span>
+
+</code></pre></div></div>
+
+<p><strong>Bitno:</strong> u vašoj collate funkciji vraćajte i duljine originalnih instanci (koje nisu nadopunjene). Duljine će nam poslužiti pri implementaciji naših modela.</p>
+
+<p>Zadatak naše collate funkcije biti će nadopuniti duljine instanci znakom punjenja do duljine najdulje instance u batchu. Za ovo, pogledajte funkciju <a href="https://pytorch.org/docs/stable/nn.html#torch.nn.utils.rnn.pad_sequence"><code class="language-plaintext highlighter-rouge">from torch.nn.utils.rnn.pad_sequence</code></a>. Primjetite da vaša implementacija collate funkcije mora znati koji se indeks koristi kao znak punjenja.</p>
+
+<p>Jednom kad smo implementirali sve navedeno, naše učitavanje podataka bi moglo izgledati ovako:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">pad_collate_fn</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">pad_index</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="c1">#...
+</span>    <span class="k">pass</span>
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">2</span> <span class="c1"># Only for demonstrative purposes
+</span><span class="n">shuffle</span> <span class="o">=</span> <span class="bp">False</span> <span class="c1"># Only for demonstrative purposes
+</span><span class="n">train_dataset</span> <span class="o">=</span> <span class="n">NLPDataset</span><span class="p">.</span><span class="n">from_file</span><span class="p">(</span><span class="s">'data/sst_train_raw.csv'</span><span class="p">)</span>
+<span class="n">train_dataloader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">train_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> 
+                              <span class="n">shuffle</span><span class="o">=</span><span class="n">shuffle</span><span class="p">,</span> <span class="n">collate_fn</span><span class="o">=</span><span class="n">pad_collate_fn</span><span class="p">)</span>
+<span class="n">texts</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">lengths</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">train_data_loader</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s">f"Texts: </span><span class="si">{</span><span class="n">texts</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">f"Labels: </span><span class="si">{</span><span class="n">labels</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">f"Lengths: </span><span class="si">{</span><span class="n">lengths</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Texts</span><span class="p">:</span> <span class="n">tensor</span><span class="p">([[</span>   <span class="mi">2</span><span class="p">,</span>  <span class="mi">554</span><span class="p">,</span>    <span class="mi">7</span><span class="p">,</span> <span class="mi">2872</span><span class="p">,</span>    <span class="mi">6</span><span class="p">,</span>   <span class="mi">22</span><span class="p">,</span>    <span class="mi">2</span><span class="p">,</span> <span class="mi">2873</span><span class="p">,</span> <span class="mi">1236</span><span class="p">,</span>    <span class="mi">8</span><span class="p">,</span>   <span class="mi">96</span><span class="p">,</span> <span class="mi">4800</span><span class="p">,</span>
+                       <span class="mi">4</span><span class="p">,</span>   <span class="mi">10</span><span class="p">,</span>   <span class="mi">72</span><span class="p">,</span>    <span class="mi">8</span><span class="p">,</span>  <span class="mi">242</span><span class="p">,</span>    <span class="mi">6</span><span class="p">,</span>   <span class="mi">75</span><span class="p">,</span>    <span class="mi">3</span><span class="p">,</span> <span class="mi">3576</span><span class="p">,</span>   <span class="mi">56</span><span class="p">,</span> <span class="mi">3577</span><span class="p">,</span>   <span class="mi">34</span><span class="p">,</span>
+                    <span class="mi">2022</span><span class="p">,</span> <span class="mi">2874</span><span class="p">,</span> <span class="mi">7123</span><span class="p">,</span> <span class="mi">3578</span><span class="p">,</span> <span class="mi">7124</span><span class="p">,</span>   <span class="mi">42</span><span class="p">,</span>  <span class="mi">779</span><span class="p">,</span> <span class="mi">7125</span><span class="p">,</span>    <span class="mi">0</span><span class="p">,</span>    <span class="mi">0</span><span class="p">],</span>
+                   <span class="p">[</span>   <span class="mi">2</span><span class="p">,</span> <span class="mi">2875</span><span class="p">,</span> <span class="mi">2023</span><span class="p">,</span> <span class="mi">4801</span><span class="p">,</span>    <span class="mi">5</span><span class="p">,</span>    <span class="mi">2</span><span class="p">,</span> <span class="mi">3579</span><span class="p">,</span>    <span class="mi">5</span><span class="p">,</span>    <span class="mi">2</span><span class="p">,</span> <span class="mi">2876</span><span class="p">,</span> <span class="mi">4802</span><span class="p">,</span>    <span class="mi">7</span><span class="p">,</span>
+                      <span class="mi">40</span><span class="p">,</span>  <span class="mi">829</span><span class="p">,</span>   <span class="mi">10</span><span class="p">,</span>    <span class="mi">3</span><span class="p">,</span> <span class="mi">4803</span><span class="p">,</span>    <span class="mi">5</span><span class="p">,</span>  <span class="mi">627</span><span class="p">,</span>   <span class="mi">62</span><span class="p">,</span>   <span class="mi">27</span><span class="p">,</span> <span class="mi">2877</span><span class="p">,</span> <span class="mi">2024</span><span class="p">,</span> <span class="mi">4804</span><span class="p">,</span>
+                     <span class="mi">962</span><span class="p">,</span>  <span class="mi">715</span><span class="p">,</span>    <span class="mi">8</span><span class="p">,</span> <span class="mi">7126</span><span class="p">,</span>  <span class="mi">555</span><span class="p">,</span>    <span class="mi">5</span><span class="p">,</span> <span class="mi">7127</span><span class="p">,</span> <span class="mi">4805</span><span class="p">,</span>    <span class="mi">8</span><span class="p">,</span> <span class="mi">7128</span><span class="p">]])</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Labels</span><span class="p">:</span> <span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Lengths</span><span class="p">:</span> <span class="n">tensor</span><span class="p">([</span><span class="mi">32</span><span class="p">,</span> <span class="mi">34</span><span class="p">])</span>
+</code></pre></div></div>
+
+<p>U stvarnoj implementaciji postavite veličinu batcha na veći broj i zastavicu shuffle na <code class="language-plaintext highlighter-rouge">True</code> za podatke skupa za učenje.</p>
+
+<h3 id="zadatak-2-implementacija-baseline-modela-25-bodova">Zadatak 2. Implementacija baseline modela (25% bodova)</h3>
+
+<p>Prvi korak kod svakog zadatka strojnog učenja bi trebao biti implementacija baseline modela. Baseline model nam služi za procjenu performansi koje naš stvarni, uobičajeno <em>skuplji</em> model mora moći preći kao plitak potok. Također, baseline modeli će nam pokazati kolika je stvarno cijena izvođenja naprednijih modela.</p>
+
+<p>Vaš zadatak u laboratorijskoj vježbi je implementirati model koji će koristiti sažimanje usrednjavanjem (<em>eng. mean pooling</em>) kako bi eliminirao problematičnu varijabilnu dimenziju. Pri primjeni sažimanja usrednjavanjem odmah eliminirajte <strong>cijelu</strong> vremensku dimenziju (tzv. <em>okno</em> je veličine T).</p>
+
+<p>Osnovni model koji implementirate mora izgledati ovako:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>avg_pool() -&gt; fc(300, 150) -&gt; ReLU() -&gt; fc(150, 150) -&gt; ReLU() -&gt; fc(150,1)
+</code></pre></div></div>
+
+<p>Kao gubitak predlažemo da koristite <a href="https://pytorch.org/docs/stable/nn.html#bcewithlogitsloss">BCEWithLogitsLoss</a>, u kojem slučaju ne morate primjeniti sigmoidu na izlaznim logitima.
+Alternativno, možete staviti da vam je izlazna dimenzionalnost broj klasa te koristiti gubitak unakrsne entropije. Oba pristupa su korištena u praksi ovisno o osobnim preferencama.</p>
+
+<p>Kao algoritam optimizacije koristite <a href="https://pytorch.org/docs/stable/optim.html#torch.optim.Adam">Adam</a>.</p>
+
+<p><strong>Implementirajte</strong> metrike praćenja performansi modela. Osim gubitka na skupu podataka, zanimaju nas <strong>preciznost</strong> (<em>eng. accuracy</em>), <a href="https://en.wikipedia.org/wiki/F1_score"><strong>f1 mjera</strong></a> i <strong>matrica zabune</strong> (<em>eng. confusion matrix</em>). Nakon svake epohe ispišite performanse modela po svim metrikama na skupu za validaciju, a nakon zadnje epohe ispišite performanse modela na skupu za testiranje.</p>
+
+<p>Radi usporedbe, naša implementacija osnovnog modela za vokabular koji koristi sve riječi (<code class="language-plaintext highlighter-rouge">max_size=-1, min_freq=1</code>) te inicijalizira njihove reprezentacije s predtreniranima, <code class="language-plaintext highlighter-rouge">seed=7052020</code>, <code class="language-plaintext highlighter-rouge">lr=1e-4</code>, <code class="language-plaintext highlighter-rouge">batch_size=10</code> na skupu za treniranje i <code class="language-plaintext highlighter-rouge">batch_size=32</code> na skupovima za validaciju i testiranje ostvaruje iduću preciznost:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+Epoch 1: valid accuracy = 64.031
+Epoch 2: valid accuracy = 66.941
+Epoch 3: valid accuracy = 72.268
+Epoch 4: Valid accuracy = 75.563
+Epoch 5: Valid accuracy = 78.199
+
+Test accuracy = 77.646
+</code></pre></div></div>
+
+<p>Postavljanje random seeda za pytorch operacije na CPU se vrši sa <code class="language-plaintext highlighter-rouge">torch.manual_seed(seed)</code>, dok istu stvar napravite i ukoliko u vašem kodu koristite numpy sa <code class="language-plaintext highlighter-rouge">np.random.seed(seed)</code>.
+Ako pokrećete kod na grafičkoj kartici, obratite pozornost na upozorenja <a href="https://pytorch.org/docs/stable/notes/randomness.html#cudnn">ovdje</a>. Povratne neuronske mreže su CUDNN optimizirane, te je moguće da reproducibilnost nije 100% osigurana osim ako ne pratite upute s poveznice nauštrb brzine.</p>
+
+<p><strong>Bitno:</strong> Dok god rezultati vašeg koda ne variraju iznimno puno (za različita pokretanja), točne izlazne brojke ne moraju biti savršeno jednake. Kako bi provjerili varijancu (tj. stabilnost) vašeg modela, vaš konačni model pokrenite barem <strong>5</strong> puta s istim hiperparametrima, ali različitim seedom. Zapišite (u excel tablicu, word dokument ili slično) rezultate izvođenja (sve navedene metrike) za svaki seed. U komentar dodajte i hiperparametre za pokretanje modela.</p>
+
+<h4 id="organizacija-koda-za-modele-implementirane-u-pytorchu">Organizacija koda za modele implementirane u Pytorchu</h4>
+
+<p>Zbog “syntactic sugara” koji prati treniranje i evaluaciju Pytorch modela, implementacija treniranja modela se dosta često odvaja u tri semantičke cjeline:</p>
+
+<ol>
+  <li>Inicijalizacija
+    <ul>
+      <li>Parsiranje argumenata</li>
+      <li>Učitavanje podataka</li>
+      <li>Inicijalizacija mreže</li>
+    </ul>
+  </li>
+  <li>Petlja za treniranje
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">train</code> metoda koja izvršava jednu epohu na skupu za treniranje</li>
+      <li>Syntactic sugar:
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">model.train()</code> - omogućava dropout</li>
+          <li><code class="language-plaintext highlighter-rouge">model.zero_grad()</code> za svaki batch - brisanje prethodnih gradijenata na parametre se ne provodi automatski</li>
+          <li><code class="language-plaintext highlighter-rouge">loss.backward()</code>-propagacija lossa na parametre</li>
+          <li><strong>[Opcionalno]</strong> <code class="language-plaintext highlighter-rouge">torch.nn.utils.clip_grad_norm_(model.parameters(), clip_value)</code>- podrezivanje gradijenata po normi</li>
+          <li><code class="language-plaintext highlighter-rouge">optimizer.step()</code>- ažuriranje parametara na temelju optimizacijskog algoritma i vrijednosti gradijenata</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Petlja za evaluaciju
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">evaluate</code> metoda koja izvrcd šava jednu epohu na skupu za validaciju ili testiranje</li>
+      <li>Syntactic sugar:
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">with torch.no_grad():</code>- gradijenti se ne prate (memorijska i vremenska efikasnost)</li>
+          <li><code class="language-plaintext highlighter-rouge">model.eval()</code>- onemogućava dropout</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ol>
+
+<p>Konkretni kosturi ovih metoda mogli bi izgledati kao u nastavku:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+  <span class="n">model</span><span class="p">.</span><span class="n">train</span><span class="p">()</span>
+  <span class="k">for</span> <span class="n">batch_num</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="n">model</span><span class="p">.</span><span class="n">zero_grad</span><span class="p">()</span>
+    <span class="c1"># ...
+</span>    <span class="n">logits</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="n">loss</span><span class="p">.</span><span class="n">backward</span><span class="p">()</span>
+    <span class="n">torch</span><span class="p">.</span><span class="n">nn</span><span class="p">.</span><span class="n">utils</span><span class="p">.</span><span class="n">clip_grad_norm_</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">args</span><span class="p">.</span><span class="n">clip</span><span class="p">)</span>
+    <span class="n">optimizer</span><span class="p">.</span><span class="n">step</span><span class="p">()</span>
+    <span class="c1"># ...
+</span>
+
+<span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+  <span class="n">model</span><span class="p">.</span><span class="nb">eval</span><span class="p">()</span>
+  <span class="k">with</span> <span class="n">torch</span><span class="p">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">batch_num</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+      <span class="c1"># ...
+</span>      <span class="n">logits</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+      <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+      <span class="c1"># ...
+</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+  <span class="n">seed</span> <span class="o">=</span> <span class="n">args</span><span class="p">.</span><span class="n">seed</span>
+  <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+  <span class="n">torch</span><span class="p">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+
+  <span class="n">train_dataset</span><span class="p">,</span> <span class="n">valid_dataset</span><span class="p">,</span> <span class="n">test_dataset</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(...)</span>
+  <span class="n">model</span> <span class="o">=</span> <span class="n">initialize_model</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="p">...)</span>
+
+  <span class="n">criterion</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">BCEWithLogitsLoss</span><span class="p">()</span>
+  <span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">optim</span><span class="p">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">)</span>
+
+  <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">args</span><span class="p">.</span><span class="n">epochs</span><span class="p">):</span>
+    <span class="n">train</span><span class="p">(...)</span>
+    <span class="n">evaluate</span><span class="p">(...)</span>
+</code></pre></div></div>
+
+<h3 id="zadatak-3-implementacija-povratne-neuronske-mreže-25-bodova">Zadatak 3. Implementacija povratne neuronske mreže (25% bodova)</h3>
+
+<p>Nakon što ste uspješno implementirali vaš baseline model, vrijeme je da isprobamo neki model baziran na povratnim neuronskim mrežama. Vaš zadatak je implementirati osnovni model povratne neuronske meže <strong>po izboru</strong>. 
+Na izboru su vam iduće ćelije: [<a href="https://pytorch.org/docs/master/generated/torch.nn.RNN.html#torch.nn.RNN">“Vanilla” RNN</a>, <a href="https://pytorch.org/docs/master/generated/torch.nn.GRU.html#torch.nn.GRU">GRU</a>, <a href="https://pytorch.org/docs/master/generated/torch.nn.LSTM.html#torch.nn.LSTM">LSTM</a>].</p>
+
+<p>Za odabrani model, detaljno pročitajte njegovu dokumentaciju. U nastavku ćemo vam samo skrenuti pozornost na nekoliko bitnih detalja:</p>
+
+<ul>
+  <li>Svaka RNN mreža kao izlaz svoje <code class="language-plaintext highlighter-rouge">forward</code> metode vraća (1) niz skrivenih stanja posljednjeg sloja i (2) skriveno stanje (tj., skrivena stanja u slučaju LSTMa) za sve slojeve zadnjeg vremenskog koraka. Kao ulaz u dekoder obično želite staviti skriveno stanje iz zadnjeg sloja u zadnjem vremenskom koraku. Kod LSTMa, to je <code class="language-plaintext highlighter-rouge">h</code> komponenta dualnog <code class="language-plaintext highlighter-rouge">(h, c)</code> skrivenog stanja.</li>
+  <li>Radi brzine, RNN mreže preferiraju inpute u <code class="language-plaintext highlighter-rouge">time-first</code> formatu (budući da je brže <em>iterirati</em> po prvoj dimenziji tenzora). Transponirajte ulaze prije nego ih šaljete RNN ćeliji.</li>
+  <li>Tenzori koji su ulaz u RNN ćelije se često “<a href="https://pytorch.org/docs/master/generated/torch.nn.utils.rnn.pack_padded_sequence.html#torch.nn.utils.rnn.pack_padded_sequence">pakiraju</a>”. Pakiranje je zapis tenzora kojemu su pridružene stvarne duljine svakog elementa u batchu. Ako koristite pakiranje, RNN mreža se neće odmatati za vremenske korake koji sadrže padding u elementima batcha. Ovdje osim efikasnosti možete dobiti i na preciznosti, ali ovaj dio <strong>nije</strong> nužan dio vaše implementacije.</li>
+  <li>Implementirajte <a href="https://pytorch.org/docs/master/generated/torch.nn.utils.clip_grad_norm_.html#torch.nn.utils.clip_grad_norm_">gradient clipping</a> prije optimizacijskog koraka
+Osnovni model vaše odabrane RNN ćelije treba izgledati ovako:</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rnn(150) -&gt; rnn(150) -&gt; fc(150, 150) -&gt; ReLU() -&gt; fc(150,1)
+</code></pre></div></div>
+
+<p>Vaš osnovni model RNN ćelije bi trebao biti jednosmjeran i imati dva sloja. Za višeslojni RNN iskoristite argument <code class="language-plaintext highlighter-rouge">num_layers</code> pri konstrukciji RNN mreže.</p>
+
+<p>Radi usporedbe, naša implementacija GRU povratne mreže za vokabular koji koristi sve riječi (<code class="language-plaintext highlighter-rouge">max_size=-1, min_freq=1</code>) te inicijalizira njihove reprezentacije s predtreniranima, <code class="language-plaintext highlighter-rouge">seed=7052020</code>, <code class="language-plaintext highlighter-rouge">lr=1e-4</code>, <code class="language-plaintext highlighter-rouge">batch_size=10</code>, <code class="language-plaintext highlighter-rouge">gradient_clip=0.25</code> na skupu za treniranje i <code class="language-plaintext highlighter-rouge">batch_size=32</code> na skupovima za validaciju i testiranje ostvaruje iduću preciznost:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Epoch 1: valid accuracy = 67.930
+Epoch 2: valid accuracy = 77.155
+Epoch 3: valid accuracy = 78.254
+Epoch 4: valid accuracy = 79.517
+Epoch 5: valid accuracy = 80.011
+
+Test accuracy = 79.985
+</code></pre></div></div>
+
+<p>Neovisno o tome koju ćeliju odaberete, pokrenite postupak učenja barem <strong>5</strong> puta s istim hiperparametrima ali različitim seedom. Pratite sve implementirane metrike i zapišite ih u datoteku.</p>
+
+<h3 id="zadatak-4-usporedba-modela-i-pretraga-hiperparametara-25-bodova">Zadatak 4. Usporedba modela i pretraga hiperparametara (25% bodova)</h3>
+
+<p>Kao što vidimo, naše incijalne implementacije modela su dosta slične po preciznosti. Kako rezultati pokretanja modela za jedan skup hiperparametara mogu biti čista sreća ili nesreća, u ovom dijelu laboratorijske vježbe ćemo implementirati iscrpnu pretragu kroz varijante modela i njihove hiperparametre.</p>
+
+<h4 id="usporedba-rnn-ćelija">Usporedba RNN ćelija</h4>
+
+<p>Neovisno o tome koju RNN ćeliju ste odabrali u trećem zadatku, proširite vaš kod na način da vrsta RNN ćelije bude argument. Pokrenite vaš kod za preostale vrste RNN ćelija i zapišite rezultate. Je li neka ćelija očiti pobjednik? Je li neka ćelija očiti gubitnik?</p>
+
+<p>Ponovite ovu usporedbu uz izmjenu hiperparametara povratnih neuronskih mreža. Idući hiperparametri povratnih neuronskih mreža su nam interesantni:</p>
+
+<ul>
+  <li>hidden_size</li>
+  <li>num_layers</li>
+  <li>dropout: primjenjen <strong>između</strong> uzastopnih slojeva RNNa (funkcionira samo za 2+ slojeva)</li>
+  <li>bidirectional: dimenzionalnost izlaza dvosmjerne rnn ćelije je <strong>dvostruka</strong></li>
+</ul>
+
+<p>Isprobajte <strong>barem</strong> 3 različite vrijednosti za svaki hiperparametar (osim bidirectional, koji ima samo dvije vrijednosti). Način na koji ćete kombinirati te vrijednosti je potpuno na vama (iscrpna rešetkasta pretraga je vremenski previše zahtjevna). Pokrenite svaku vrstu ćelije za svaku kombinaciju hiperparametara i zapišite rezultate (relevantne metrike). Nemojte se bojati raditi agresivne izmjene u vrijednostima hiperparametara (male izmjene vam neće dati puno informacija). Primjećujete li da neki hiperparametar bitno utječe na performanse ćelija? Koji?</p>
+
+<p>Zapamtite / zapišite set hiperparametara koji vam daje najbolje rezultate. Za njega pokrenite učenje barem 5 puta s različitim seedovima i zapišite dobivene metrike.</p>
+
+<h4 id="optimizacija-hiperparametara">Optimizacija hiperparametara</h4>
+
+<p>Probajte pokrenuti povratne neuronske mreže za najbolji set hiperparametara bez da koristite prednaučene vektorske reprezentacije. Probajte isto za vaš baseline model. Koji model više “pati” od gubitka prednaučenih reprezentacija?</p>
+
+<p>Ulazne vektorske reprezentacije su jedan jako bitan hiperparametar, za koji u okviru laboratorijske vježbe imamo samo dvije vrijednosti – koristimo li ih ili ne. U analizi teksta su ulazne vektorske reprezentacije veoma velik dio uspješnosti algoritma.
+U ovom dijelu laboratorijske vježbe trebate odabrati <strong>barem 5</strong> od idućih hiperparametara te provjeriti kako modeli funkcioniraju za njihove izmjene. Ako hiperparametar utječe i na baseline model, kao i povratnu neuronsku mrežu, pokrenite eksperimente na oba modela. 
+Za ćeliju povratne neuronske mreže odaberite onu koja ostvaruje (po vama) bolje rezultate na prošlom dijelu vježbe.</p>
+
+<p>Za hiperparametre označene s nekim brojem zvjezdica (*), odaberite <strong>samo jedan</strong> od onih s istim brojem zvjezdica.</p>
+
+<p>Hiperparametri:</p>
+
+<ul>
+  <li>(*) Veličina vokabulara <strong>V</strong></li>
+  <li>(*) Minimalna frekvencija riječi <strong>min_freq</strong></li>
+  <li>(**) Stopa učenja</li>
+  <li>(**) Veličina batcha</li>
+  <li>Dropout</li>
+  <li>Broj slojeva</li>
+  <li>Dimenzionalnost skrivenih slojeva</li>
+  <li>Optimizacijski algoritam (probajte nešto osim Adama)</li>
+  <li>Funkcija nelinearnosti (u potpuno povezanim slojevima)</li>
+  <li>Iznos na koji se podrezuju vrijednosti gradijenata</li>
+  <li>Vrsta sažimanja (Baseline)</li>
+  <li>Zamrzavanje ulaznih vektorskih reprezentacije (argument <code class="language-plaintext highlighter-rouge">freeze</code> funkcije <code class="language-plaintext highlighter-rouge">from_pretrained</code>)</li>
+</ul>
+
+<p>Za svaki od odabranih hiperparametara isprobajte barem tri njegove različite vrijednosti (osim ako je binaran). Rezultate eksperimenata zapisujte. Pokrenite baseline i povratni model s najboljim hiperparametrima barem 5 puta i zapišite prosjek i devijaciju svih praćenih metrika. Čini li vam se neki parametar kao najutjecajniji za uspjeh? Nemojte se bojati raditi agresivne izmjene u vrijednostima hiperparametara jer će vas one lakše dovesti do zaključaka.</p>
+
+<h4 id="upute-oko-eksperimenata-i-zapisivanja">Upute oko eksperimenata i zapisivanja</h4>
+
+<p>Način i format zapisa rezultata je namjerno ostavljen otvoren. Cilj vježbe nije natjerati vas da radite u nekom okviru, već probajte ovo shvatiti kao istraživački projekt iz kojeg na kraju trebate nekome prezentirati svoja saznanja i potkrijepiti ih brojevima. Ti brojevi mogu biti zapis u tablici, kao dio slobodnog teksta s opisom eksperimenata ili vizualizirani. Rezultate ćete prezentirati verbalno, tako da odaberite format koji vam najviše paše za to.</p>
+
+<p><strong>Broj epoha</strong> je namjerno nedefiniran zbog različitih kapaciteta hardvera na vašim osobnim računalima. Skup podataka SST je odabran najviše jer je malen i čak ni izvođenje na CPU ne uzima previše vremena. Idejno bi se svaki eksperiment trebao pokrenuti na barem 5 epoha. Ukoliko vam to hardver vremenski ili prostorno ne dopušta, molimo vas da nam to javite.</p>
+
+<h3 id="bonus-zadatak-pozornost-max-20-bodova">Bonus zadatak: pozornost (max 20% bodova)</h3>
+
+<p>Dodatan zadatak biti će implementacija Bahdanau pozornosti za klasifikaciju slijeda. Konkretno, izbacujemo upit iz formulacije pozornosti, kao nelinearnost koristimo tangens hiperbolni a skrivena stanja (izlazi naše povratne neuronske mreže) će nam istovremeno služiti kao ključevi i vrijednosti.</p>
+
+<p>Težine pozorosti računamo na idući način:</p>
+
+<span class="MathJax_Preview" style="color: inherit; display: none;"></span><div class="MathJax_Display" style="text-align: center;"><span class="MathJax" id="MathJax-Element-3-Frame" tabindex="0" style="text-align: center; position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; display=&quot;block&quot;&gt;&lt;msup&gt;&lt;mi&gt;a&lt;/mi&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;t&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;/mrow&gt;&lt;/msup&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;msub&gt;&lt;mi&gt;w&lt;/mi&gt;&lt;mn&gt;2&lt;/mn&gt;&lt;/msub&gt;&lt;mi&gt;t&lt;/mi&gt;&lt;mi&gt;a&lt;/mi&gt;&lt;mi&gt;n&lt;/mi&gt;&lt;mi&gt;h&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;msub&gt;&lt;mi&gt;W&lt;/mi&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;/msub&gt;&lt;msup&gt;&lt;mi&gt;h&lt;/mi&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;t&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;/mrow&gt;&lt;/msup&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;mspace width=&quot;1em&quot; /&gt;&lt;mi&gt;&amp;#x03B1;&lt;/mi&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mtext&gt;softmax&lt;/mtext&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;a&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-18" style="width: 21.058em; display: inline-block;"><span style="display: inline-block; position: relative; width: 17.267em; height: 0px; font-size: 122%;"><span style="position: absolute; clip: rect(1.13em, 1017.16em, 2.615em, -999.997em); top: -2.2em; left: 0em;"><span class="mrow" id="MathJax-Span-19"><span class="msubsup" id="MathJax-Span-20"><span style="display: inline-block; position: relative; width: 1.437em; height: 0px;"><span style="position: absolute; clip: rect(3.384em, 1000.51em, 4.152em, -999.997em); top: -3.993em; left: 0em;"><span class="mi" id="MathJax-Span-21" style="font-family: MathJax_Math-italic;">a</span><span style="display: inline-block; width: 0px; height: 3.998em;"></span></span><span style="position: absolute; top: -4.403em; left: 0.515em;"><span class="texatom" id="MathJax-Span-22"><span class="mrow" id="MathJax-Span-23"><span class="mo" id="MathJax-Span-24" style="font-size: 70.7%; font-family: MathJax_Main;">(</span><span class="mi" id="MathJax-Span-25" style="font-size: 70.7%; font-family: MathJax_Math-italic;">t</span><span class="mo" id="MathJax-Span-26" style="font-size: 70.7%; font-family: MathJax_Main;">)</span></span></span><span style="display: inline-block; width: 0px; height: 3.998em;"></span></span></span></span><span class="mo" id="MathJax-Span-27" style="font-family: MathJax_Main; padding-left: 0.259em;">=</span><span class="msubsup" id="MathJax-Span-28" style="padding-left: 0.259em;"><span style="display: inline-block; position: relative; width: 1.13em; height: 0px;"><span style="position: absolute; clip: rect(3.384em, 1000.67em, 4.152em, -999.997em); top: -3.993em; left: 0em;"><span class="mi" id="MathJax-Span-29" style="font-family: MathJax_Math-italic;">w</span><span style="display: inline-block; width: 0px; height: 3.998em;"></span></span><span style="position: absolute; top: -3.84em; left: 0.72em;"><span class="mn" id="MathJax-Span-30" style="font-size: 70.7%; font-family: MathJax_Main;">2</span><span style="display: inline-block; width: 0px; height: 3.998em;"></span></span></span></span><span class="mi" id="MathJax-Span-31" style="font-family: MathJax_Math-italic;">t</span><span class="mi" id="MathJax-Span-32" style="font-family: MathJax_Math-italic;">a</span><span class="mi" id="MathJax-Span-33" style="font-family: MathJax_Math-italic;">n</span><span class="mi" id="MathJax-Span-34" style="font-family: MathJax_Math-italic;">h</span><span class="mo" id="MathJax-Span-35" style="font-family: MathJax_Main;">(</span><span class="msubsup" id="MathJax-Span-36"><span style="display: inline-block; position: relative; width: 1.386em; height: 0px;"><span style="position: absolute; clip: rect(3.179em, 1001.03em, 4.152em, -999.997em); top: -3.993em; left: 0em;"><span class="mi" id="MathJax-Span-37" style="font-family: MathJax_Math-italic;">W<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.105em;"></span></span><span style="display: inline-block; width: 0px; height: 3.998em;"></span></span><span style="position: absolute; top: -3.84em; left: 0.925em;"><span class="mn" id="MathJax-Span-38" style="font-size: 70.7%; font-family: MathJax_Main;">1</span><span style="display: inline-block; width: 0px; height: 3.998em;"></span></span></span></span><span class="msubsup" id="MathJax-Span-39"><span style="display: inline-block; position: relative; width: 1.437em; height: 0px;"><span style="position: absolute; clip: rect(3.128em, 1000.57em, 4.152em, -999.997em); top: -3.993em; left: 0em;"><span class="mi" id="MathJax-Span-40" style="font-family: MathJax_Math-italic;">h</span><span style="display: inline-block; width: 0px; height: 3.998em;"></span></span><span style="position: absolute; top: -4.403em; left: 0.566em;"><span class="texatom" id="MathJax-Span-41"><span class="mrow" id="MathJax-Span-42"><span class="mo" id="MathJax-Span-43" style="font-size: 70.7%; font-family: MathJax_Main;">(</span><span class="mi" id="MathJax-Span-44" style="font-size: 70.7%; font-family: MathJax_Math-italic;">t</span><span class="mo" id="MathJax-Span-45" style="font-size: 70.7%; font-family: MathJax_Main;">)</span></span></span><span style="display: inline-block; width: 0px; height: 3.998em;"></span></span></span></span><span class="mo" id="MathJax-Span-46" style="font-family: MathJax_Main;">)</span><span class="mspace" id="MathJax-Span-47" style="height: 0em; vertical-align: 0em; width: 1.027em; display: inline-block; overflow: hidden;"></span><span class="mi" id="MathJax-Span-48" style="font-family: MathJax_Math-italic;">α</span><span class="mo" id="MathJax-Span-49" style="font-family: MathJax_Main; padding-left: 0.259em;">=</span><span class="mtext" id="MathJax-Span-50" style="font-family: MathJax_Main; padding-left: 0.259em;">softmax</span><span class="mo" id="MathJax-Span-51" style="font-family: MathJax_Main;">(</span><span class="mi" id="MathJax-Span-52" style="font-family: MathJax_Math-italic;">a</span><span class="mo" id="MathJax-Span-53" style="font-family: MathJax_Main;">)</span></span><span style="display: inline-block; width: 0px; height: 2.205em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.372em; border-left: 0px solid; width: 0px; height: 1.566em;"></span></span></nobr><span class="MJX_Assistive_MathML MJX_Assistive_MathML_Block" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><msup><mi>a</mi><mrow class="MJX-TeXAtom-ORD"><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo></mrow></msup><mo>=</mo><msub><mi>w</mi><mn>2</mn></msub><mi>t</mi><mi>a</mi><mi>n</mi><mi>h</mi><mo stretchy="false">(</mo><msub><mi>W</mi><mn>1</mn></msub><msup><mi>h</mi><mrow class="MJX-TeXAtom-ORD"><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo></mrow></msup><mo stretchy="false">)</mo><mspace width="1em"></mspace><mi>α</mi><mo>=</mo><mtext>softmax</mtext><mo stretchy="false">(</mo><mi>a</mi><mo stretchy="false">)</mo></math></span></span></div><script type="math/tex; mode=display" id="MathJax-Element-3">a^{(t)} = w_2 tanh(W_1 h^{(t)}) \quad \alpha = \text{softmax} (a)</script>
+
+<p>A potom ih koristimo u težinskom sažimanju skrivenih stanja na idući način:</p>
+
+<span class="MathJax_Preview" style="color: inherit; display: none;"></span><div class="MathJax_Display" style="text-align: center;"><span class="MathJax" id="MathJax-Element-4-Frame" tabindex="0" style="text-align: center; position: relative;" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; display=&quot;block&quot;&gt;&lt;mi&gt;o&lt;/mi&gt;&lt;mi&gt;u&lt;/mi&gt;&lt;msub&gt;&lt;mi&gt;t&lt;/mi&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mi&gt;a&lt;/mi&gt;&lt;mi&gt;t&lt;/mi&gt;&lt;mi&gt;t&lt;/mi&gt;&lt;mi&gt;n&lt;/mi&gt;&lt;/mrow&gt;&lt;/msub&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;munderover&gt;&lt;mo&gt;&amp;#x2211;&lt;/mo&gt;&lt;mi&gt;t&lt;/mi&gt;&lt;mi&gt;T&lt;/mi&gt;&lt;/munderover&gt;&lt;msub&gt;&lt;mi&gt;&amp;#x03B1;&lt;/mi&gt;&lt;mi&gt;t&lt;/mi&gt;&lt;/msub&gt;&lt;msup&gt;&lt;mi&gt;h&lt;/mi&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi&gt;t&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;/mrow&gt;&lt;/msup&gt;&lt;/math&gt;" role="presentation"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-54" style="width: 9.89em; display: inline-block;"><span style="display: inline-block; position: relative; width: 8.097em; height: 0px; font-size: 122%;"><span style="position: absolute; clip: rect(0.31em, 1008.1em, 3.537em, -999.997em); top: -2.2em; left: 0em;"><span class="mrow" id="MathJax-Span-55"><span class="mi" id="MathJax-Span-56" style="font-family: MathJax_Math-italic;">o</span><span class="mi" id="MathJax-Span-57" style="font-family: MathJax_Math-italic;">u</span><span class="msubsup" id="MathJax-Span-58"><span style="display: inline-block; position: relative; width: 1.744em; height: 0px;"><span style="position: absolute; clip: rect(3.23em, 1000.31em, 4.152em, -999.997em); top: -3.993em; left: 0em;"><span class="mi" id="MathJax-Span-59" style="font-family: MathJax_Math-italic;">t</span><span style="display: inline-block; width: 0px; height: 3.998em;"></span></span><span style="position: absolute; top: -3.84em; left: 0.361em;"><span class="texatom" id="MathJax-Span-60"><span class="mrow" id="MathJax-Span-61"><span class="mi" id="MathJax-Span-62" style="font-size: 70.7%; font-family: MathJax_Math-italic;">a</span><span class="mi" id="MathJax-Span-63" style="font-size: 70.7%; font-family: MathJax_Math-italic;">t</span><span class="mi" id="MathJax-Span-64" style="font-size: 70.7%; font-family: MathJax_Math-italic;">t</span><span class="mi" id="MathJax-Span-65" style="font-size: 70.7%; font-family: MathJax_Math-italic;">n</span></span></span><span style="display: inline-block; width: 0px; height: 3.998em;"></span></span></span></span><span class="mo" id="MathJax-Span-66" style="font-family: MathJax_Main; padding-left: 0.259em;">=</span><span class="munderover" id="MathJax-Span-67" style="padding-left: 0.259em;"><span style="display: inline-block; position: relative; width: 1.437em; height: 0px;"><span style="position: absolute; clip: rect(2.871em, 1001.39em, 4.613em, -999.997em); top: -3.993em; left: 0em;"><span class="mo" id="MathJax-Span-68" style="font-family: MathJax_Size2; vertical-align: 0em;">∑</span><span style="display: inline-block; width: 0px; height: 3.998em;"></span></span><span style="position: absolute; clip: rect(3.384em, 1000.26em, 4.255em, -999.997em); top: -2.918em; left: 0.617em;"><span class="mi" id="MathJax-Span-69" style="font-size: 70.7%; font-family: MathJax_Math-italic;">t</span><span style="display: inline-block; width: 0px; height: 3.998em;"></span></span><span style="position: absolute; clip: rect(3.281em, 1000.51em, 4.152em, -999.997em); top: -5.12em; left: 0.464em;"><span class="mi" id="MathJax-Span-70" style="font-size: 70.7%; font-family: MathJax_Math-italic;">T<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.105em;"></span></span><span style="display: inline-block; width: 0px; height: 3.998em;"></span></span></span></span><span class="msubsup" id="MathJax-Span-71" style="padding-left: 0.156em;"><span style="display: inline-block; position: relative; width: 0.976em; height: 0px;"><span style="position: absolute; clip: rect(3.384em, 1000.62em, 4.152em, -999.997em); top: -3.993em; left: 0em;"><span class="mi" id="MathJax-Span-72" style="font-family: MathJax_Math-italic;">α</span><span style="display: inline-block; width: 0px; height: 3.998em;"></span></span><span style="position: absolute; top: -3.84em; left: 0.617em;"><span class="mi" id="MathJax-Span-73" style="font-size: 70.7%; font-family: MathJax_Math-italic;">t</span><span style="display: inline-block; width: 0px; height: 3.998em;"></span></span></span></span><span class="msubsup" id="MathJax-Span-74"><span style="display: inline-block; position: relative; width: 1.437em; height: 0px;"><span style="position: absolute; clip: rect(3.128em, 1000.57em, 4.152em, -999.997em); top: -3.993em; left: 0em;"><span class="mi" id="MathJax-Span-75" style="font-family: MathJax_Math-italic;">h</span><span style="display: inline-block; width: 0px; height: 3.998em;"></span></span><span style="position: absolute; top: -4.403em; left: 0.566em;"><span class="texatom" id="MathJax-Span-76"><span class="mrow" id="MathJax-Span-77"><span class="mo" id="MathJax-Span-78" style="font-size: 70.7%; font-family: MathJax_Main;">(</span><span class="mi" id="MathJax-Span-79" style="font-size: 70.7%; font-family: MathJax_Math-italic;">t</span><span class="mo" id="MathJax-Span-80" style="font-size: 70.7%; font-family: MathJax_Main;">)</span></span></span><span style="display: inline-block; width: 0px; height: 3.998em;"></span></span></span></span></span><span style="display: inline-block; width: 0px; height: 2.205em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -1.497em; border-left: 0px solid; width: 0px; height: 3.691em;"></span></span></nobr><span class="MJX_Assistive_MathML MJX_Assistive_MathML_Block" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mi>o</mi><mi>u</mi><msub><mi>t</mi><mrow class="MJX-TeXAtom-ORD"><mi>a</mi><mi>t</mi><mi>t</mi><mi>n</mi></mrow></msub><mo>=</mo><munderover><mo>∑</mo><mi>t</mi><mi>T</mi></munderover><msub><mi>α</mi><mi>t</mi></msub><msup><mi>h</mi><mrow class="MJX-TeXAtom-ORD"><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo></mrow></msup></math></span></span></div><script type="math/tex; mode=display" id="MathJax-Element-4">out_{attn} = \sum_t^T \alpha_t h^{(t)}</script>
+
+<p>te izlaz algoritma pozornosti koristimo kao ulaz našem izlaznom sloju.
+Kao dimenziju skrivenog stanja algoritma pozornosti (izlazna dimenzija matrice [W_1]) koristite polovicu dimenzionalnosti skrivenog stanja vaše povratne neuronske mreže.</p>
+
+<p>Neka u vašoj implementaciji korištenje algoritma pozornosti za povratnu neuronsku mrežu bude opcionalno (hiperparametar). Provjerite koliko pozornost doprinosi rezultatima svake neuronske ćelije. Pokrenite modele sa i bez algoritma pozornosti te zapišite prosjek i devijaciju svih praćenih metrika.</p>
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrap">
+
+    <div class="footer-col-1 column">
+      <ul>
+        
+        <li>
+          <a href="https://github.com/dlunizg">
+            <span class="icon github">
+              <svg version="1.1" class="github-icon-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+                <path fill-rule="evenodd" clip-rule="evenodd" fill="#C2C2C2" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761
+                c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32
+                c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472
+                c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037
+                C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65
+                c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261
+                c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082
+                c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129
+                c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"></path>
+              </svg>
+            </span>
+            <span class="username">dlunizg</span>
+          </a>
+        </li>
+        
+        <li>
+          <a href="mailto:ivan.kreso@fer.hr">ivan.kreso@fer.hr</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="footer-col-2 column">
+        
+    </div>
+
+    <div class="footer-col-3 column">
+      
+    </div>
+
+  </div>
+
+</footer>
+
+
+    <!-- mathjax -->
+    <script src="./lab3_task_croatian_files/MathJax.js" id=""></script>
+    
+<div style="position: absolute; width: 0px; height: 0px; overflow: hidden; padding: 0px; border: 0px; margin: 0px;"><div id="MathJax_Font_Test" style="position: absolute; visibility: hidden; top: 0px; left: 0px; width: auto; padding: 0px; border: 0px; margin: 0px; white-space: nowrap; text-align: left; text-indent: 0px; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; font-size: 40px; font-weight: normal; font-style: normal; font-family: MathJax_Size2, sans-serif;"></div></div></body></html>
