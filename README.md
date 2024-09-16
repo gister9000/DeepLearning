@@ -1,2 +1,2 @@
-# DeepLearning
-Solved programmatic and math exercises to learn about deep neural networks. 
+# Sentiment analysis using deep neural networks
+Solved programmatic and math exercises such as sentiment analysis using deep neural networks.
